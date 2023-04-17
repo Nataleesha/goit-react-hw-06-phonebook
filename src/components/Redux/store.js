@@ -1,27 +1,28 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import {
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 
-export const addContact = createAction("contacts/addContact");
-export const removeContact = createAction("contacts/deleteContact");
-
-const contactsReducer = createReducer(
-  JSON.parse(localStorage.getItem("contacts")) || [],
-  {
-    [addContact]: (state, action) => [...state, action.payload],
-    [removeContact]: (state, action) =>
-      state.filter((contact) => contact.id !== action.payload),
-  }
-);
-
-export const setFilter = createAction("filter/setFilter");
-
-const filterReducer = createReducer("", {
-  [setFilter]: (state, action) => (state = action.payload),
-});
+import { contactsReducer } from "components/Redux/contactsSlice.js";
+import { filterSlice } from "components/Redux/filterSlice.js";
 
 export const store = configureStore({
   reducer: {
     contacts: contactsReducer,
-    filter: filterReducer,
+    filter: filterSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
+
+export const persistor = persistStore(store);

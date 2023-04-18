@@ -31,11 +31,11 @@ export default function Form() {
       )
     ) {
       alert(name + " is already in your contacts.");
-      return;
+    } else {
+      dispatch(addContact({ id: nanoid(), name, number }));
+      setName("");
+      setNumber("");
     }
-    dispatch(addContact({ id: nanoid(), name, number }));
-    setName("");
-    setNumber("");
   };
 
   const handleState = (e) => {
